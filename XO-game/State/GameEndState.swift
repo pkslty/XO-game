@@ -43,6 +43,8 @@ class GameEndState: PlayGameState {
             return "First"
         case .second:
             return "Second"
+        case .ai:
+            return "AI"
         }
     }
 }

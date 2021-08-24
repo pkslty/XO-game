@@ -16,6 +16,7 @@ class GameViewController: UIViewController {
     @IBOutlet var winnerLabel: UILabel!
     @IBOutlet var restartButton: UIButton!
     
+    var gameType: GameType!
     var counter = 0
     private let gameBoard = Gameboard()
     private lazy var referee = Referee(gameboard: gameBoard)
@@ -35,10 +36,10 @@ class GameViewController: UIViewController {
             guard let self = self else { return }
 
             self.currentState.addSign(at: position)
-            self.counter += 1
 
             if self.currentState.isMoveCompleted {
                 self.nextPlayerTurn()
+                self.counter += 1
             }
         }
     }
@@ -58,10 +59,21 @@ class GameViewController: UIViewController {
         
         let markView = getMarkView(player: firstPlayer)
         
-        currentState = PlayerGameState(player: firstPlayer,
-                                       gameViewController: self,
-                                       gameBoard: gameBoard,
-                                       gameBoardView: gameboardView, markView: markView)
+        switch gameType {
+        case .twoPlayers:
+            currentState = PlayerGameState(player: firstPlayer,
+                                           gameViewController: self,
+                                           gameBoard: gameBoard,
+                                           gameBoardView: gameboardView, markView: markView)
+        case .ai:
+            currentState = AIGameState(player: firstPlayer,
+                                           gameViewController: self,
+                                           gameBoard: gameBoard,
+                                           gameBoardView: gameboardView, markView: markView)
+        case .none:
+            break
+        }
+        
     }
     
     private func nextPlayerTurn() {
@@ -83,13 +95,24 @@ class GameViewController: UIViewController {
                                            gameBoard: gameBoard, gameBoardView: gameboardView, markView: markView)
         }
         
+        if let playerState = currentState as? AIGameState {
+            let next = playerState.player.next
+            let markView = getMarkView(player: next)
+            currentState = AIGameState(player: next, gameViewController: self,
+                                           gameBoard: gameBoard, gameBoardView: gameboardView, markView: markView)
+            if self.currentState.isMoveCompleted {
+                self.nextPlayerTurn()
+                self.counter += 1
+            }
+        }
+        
     }
     
     private func getMarkView(player: Player) -> MarkView {
         switch player {
         case .first:
             return XView()
-        case .second:
+        case .second, .ai:
             return OView()
         }
     }

@@ -76,7 +76,9 @@ public class GameboardView: UIView {
         guard let touchLocation = touches.first?.location(in: self) else { return }
         let position = GameboardPosition(column: determineColumn(for: touchLocation),
                                          row: determineRow(for: touchLocation))
-        onSelectPosition?(position)
+        //if canPlaceMarkView(at: position) {
+            onSelectPosition?(position)
+        //}
     }
     
     // MARK: - UI

@@ -54,6 +54,7 @@ class PlayerGameState: PlayGameState {
         case .second:
             gameViewController?.firstPlayerTurnLabel.isHidden = true
             gameViewController?.secondPlayerTurnLabel.isHidden = false
+        default: break
         }
         
         gameViewController?.winnerLabel.isHidden = true
